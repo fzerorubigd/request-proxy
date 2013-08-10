@@ -1,0 +1,21 @@
+{
+    "name": "fzerorubigd/php-request-duplicator",
+    "description": "Proxy request to another server",
+    "authors": [
+        {
+            "name": "fzerorubigd",
+            "email": "fzerorubigd@gmail.com"
+        }
+    ],
+    "require": {
+
+    },
+    "autoload": {
+        "psr-0": {
+            "Cybits": "src/"
+        }
+    },
+    "require-dev": {
+        "phpunit/phpunit": "3.7.*"
+    }
+}
