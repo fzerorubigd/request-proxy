@@ -49,29 +49,37 @@ class RequestProxy
      *
      * @throws \Exception
      */
-    public function serve()
+    public function serve($return = false)
     {
+        ob_start();
         $this->_initCurl();
         $this->_setUrl();
         $this->_setMethod();
 
-        if ($this->getOption('send_headers', true)) {
+        if ($this->getOption('send_headers', true) && !$return) {
             $this->_setHeaders();
         }
-        if ($this->getOption('send_cookies', true)) {
+        if ($this->getOption('send_cookies', true) && !$return) {
             $this->_setCookies();
         }
 
         if ($this->_execCurl()) {
-            http_response_code($this->_state['http_code']);
-            foreach ($this->_header as $header) {
-                header($header);
-                echo $this->_content;
+            if (!$return) {
+                http_response_code($this->_state['http_code']);
+                foreach ($this->_header as $header) {
+                    header($header);
+                }
             }
-
+            echo $this->_content;
         } else {
             // What to do?
             throw new \Exception('Fail');
+        }
+
+        if ($return) {
+            return ob_get_clean();
+        } else {
+            ob_end_flush();
         }
     }
 
@@ -88,7 +96,7 @@ class RequestProxy
         }
         $this->_state = curl_getinfo($this->_curl);
         list($header, $content) = preg_split('/([\r\n][\r\n])\\1/', $result, 2);
-        $this->_header = preg_split( '/[\r\n]+/', $header );;
+        $this->_header = preg_split('/[\r\n]+/', $header);;
         $this->_content = $content;
 
         return true;
